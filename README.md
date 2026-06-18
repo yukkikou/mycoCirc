@@ -69,9 +69,9 @@ Junction-level (per gene):
 
 | Group | Training Strains | Held-out Test |
 |-------|-----------------|---------------|
-| **Candida** | P1, P2, P3, P5, P6, S8 | **P4** (*C. auris*) |
-| **Cryptococcus** | C1, C2, C3, C5, C6, C7 | **C4** (*C. neoformans* var. *neoformans*) |
-| **Filamentous** | F3, F4, N1, A1, A3 | **F6** (*F. venenatum*) |
+| **Candida** | *C. albicans*, *C. tropicalis*, *C. glabrata* (×2), *P. kudriavzevii*, *S. cerevisiae* | **_C. auris_** |
+| **Cryptococcus** | *C. neoformans* var. *grubii* (×2), *C. floricola*, *C. gattii* (×2), *C. laurentii* | **_C. neoformans_ var. _neoformans_** |
+| **Filamentous** | *F. proliferatum*, *F. dimerum*, *N. crassa*, *A. fumigatus*, *P. chrysogenum* | **_F. venenatum_** |
 
 ---
 
