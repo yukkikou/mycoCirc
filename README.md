@@ -7,9 +7,9 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)]()
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)]()
 
-**mycoCirc** (previously PanCirc-Fungi) is a multi-modal deep learning model that predicts **which genes produce circular RNAs (circRNAs)** and **which backsplice junction is most likely**, directly from a fungal genome sequence and gene annotation.
+**mycoCirc** is a multi-modal deep learning model that predicts **which genes produce circular RNAs (circRNAs)** and **which backsplice junction is most likely**, directly from a fungal genome sequence and gene annotation.
 
-Unlike existing single-modal methods (JEDI, CircPCBL), mycoCirc integrates **five distinct modalities** during pre-training and fine-tuning, achieving superior cross-species generalization across 22 fungal strains from *Candida*, *Cryptococcus*, and *Filamentous* groups.
+Unlike existing single-modal methods (JEDI, CircPCBL), mycoCirc integrates **five distinct modalities** during pre-training and fine-tuning. The model is pre-trained on 22 fungal strains spanning three major taxonomic groups (Candida, Cryptococcus, Filamentous) and demonstrates strong **cross-species generalization**: a model fine-tuned on one group can predict circRNA genes in phylogenetically related fungal species not seen during training, including entirely unseen genera. This makes mycoCirc applicable to a broad range of fungal species beyond the original training set.
 
 ---
 
@@ -298,15 +298,22 @@ sbatch scripts/run_interpretability.slurm
 
 ## Citation
 
-If you use mycoCirc in your research, please cite the repository:
+If you use mycoCirc in your research, please cite:
 
 ```
 @software{mycoCirc2026,
+  author = {Xueyan Hu},
   title = {mycoCirc: A Multi-modal Foundation Model for Pan-Fungal circRNA Prediction},
   year = {2026},
-  url = {https://github.com/user/pancirc-fungi}
+  url = {https://github.com/yukkikou/mycoCirc}
 }
 ```
+
+### References
+
+J.-Y. Jiang et al. JEDI: circular RNA prediction based on junction encoders and deep interaction among splice sites. *Bioinformatics*, 37(Supplement 1):i289–i298, 2021.
+
+P. Wu et al. CircPCBL: Identification of Plant CircRNAs with a CNN-BiGRU-GLT Model. *Plants*, 12(8):1652, 2023.
 
 ---
 
