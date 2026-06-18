@@ -1,0 +1,4 @@
+group	n_genes	n_fuzzy_eval	top1_exact	top3_exact	top1_fuzzy_5bp	top3_fuzzy_5bp	recall_at_1_fuzzy	recall_at_3_fuzzy
+Candida	152	152	0.0000	0.0000	0.8553	0.9539	0.8553	0.9539
+Cryptococcus	519	519	0.0000	0.0019	0.1060	0.2274	0.0938	0.2103
+Filamentous	984	984	0.0051	0.0081	0.2815	0.5193	0.2634	0.4891

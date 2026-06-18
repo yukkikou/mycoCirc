@@ -1,0 +1,4 @@
+group	pct_single_exon_of_all	pct_single_exon_of_positive	auroc_single	auroc_multi	auroc_gap	n_total	n_positive	n_single_exon_total	n_single_exon_positive	n_multi_exon_positive
+Candida	88.5	84.9	0.6985	0.6558	+0.0427	304	152	269	129	23
+Cryptococcus	2.4	1.7	0.5486	0.6936	-0.1449	1041	519	25	9	510
+Filamentous	21.1	16.8	0.5526	0.6842	-0.1317	1974	984	416	165	819

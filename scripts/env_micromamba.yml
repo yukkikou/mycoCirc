@@ -1,0 +1,52 @@
+# PanCirc-Fungi micromamba environment
+# Usage:
+#   micromamba env create -f scripts/env_micromamba.yml
+#   micromamba activate pancirc-fungi
+#   pip install torch>=2.4.0 --index-url https://download.pytorch.org/whl/cu124
+#
+# Or via the setup script:
+#   bash scripts/setup_micromamba_env.sh
+#
+# Note: PyTorch with CUDA 12.x must be installed via pip (not available
+# on conda channels for CUDA 12). pyfaidx also requires pip.
+
+name: pancirc-fungi
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  # ─── Python ────────────────────────────────────────────────────────────
+  - python>=3.9
+  - pip
+
+  # ─── Data Processing ──────────────────────────────────────────────────
+  - numpy>=1.24.0
+  - pandas>=1.5.0
+  - scikit-learn>=1.2.0
+  - scipy>=1.10.0
+
+  # ─── Sequence / Genomics ───────────────────────────────────────────────
+  - biopython>=1.81
+
+  # ─── Visualization ─────────────────────────────────────────────────────
+  - matplotlib>=3.6.0
+  - seaborn>=0.12.0
+
+  # ─── Utilities ─────────────────────────────────────────────────────────
+  - pyyaml>=6.0
+  - tqdm>=4.64.0
+  - h5py
+
+  # ─── Interpretability ──────────────────────────────────────────────────
+  - captum>=0.6.0
+
+  # ─── Training tools ────────────────────────────────────────────────────
+  - tensorboard
+  - accelerate
+
+  # ─── pip-only packages ─────────────────────────────────────────────────
+  - pip:
+    - pyfaidx>=0.7.2
+    - logomaker>=0.8           # sequence logo generation

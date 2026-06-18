@@ -1,0 +1,10 @@
+group	exon_type	n_genes	n_positive	auroc	auprc	f1	accuracy	mcc
+Candida	single_exon	269	129	0.6985	0.7088	0.5446	0.6580	0.3346
+Candida	multi_exon	35	23	0.6558	0.7416	0.5789	0.5429	0.1390
+Candida	total	304	152	0.7065	0.7135	0.5500	0.6447	0.3191
+Cryptococcus	single_exon	25	9	0.5486	0.5494	0.0000	0.6400	0.0000
+Cryptococcus	multi_exon	1016	510	0.6936	0.7096	0.3692	0.5965	0.2840
+Cryptococcus	total	1041	519	0.6927	0.7069	0.3642	0.5975	0.2827
+Filamentous	single_exon	416	165	0.5526	0.4238	0.1627	0.5793	-0.0072
+Filamentous	multi_exon	1558	819	0.6842	0.7147	0.4442	0.5937	0.2698
+Filamentous	total	1974	984	0.6606	0.6544	0.4006	0.5907	0.2314

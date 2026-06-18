@@ -1,0 +1,128 @@
+# PanCirc-Fungi: HighDim Configuration (k=5, embed_dim=128)
+# Based on hyperparameter sweep — best for Candida, competitive overall
+# All paths are relative to the project root (4_model/)
+
+# ─── Data ─────────────────────────────────────────────────────────────────────
+data:
+  tsv_path: "all_lib_model_full.tsv"
+  flank_size: 150           # junction side flank length [50-500], to be tuned
+  genome_window_size: 10000 # genomic context window (bp)
+  genome_bin_size: 50       # bp per bin for genome profile
+  max_candidates_per_gene: 50
+  negative_ratio: 1.0       # negative:positive sample ratio
+  filter_circ_types: ["exon", "intron"]  # only these circ_types (w/ gene_id)
+
+# ─── Model ────────────────────────────────────────────────────────────────────
+model:
+  fusion_dim: 128           # fused gene representation dimension
+  dropout: 0.1
+
+  # GenomicContextEncoder
+  genome_ctx:
+    in_channels: 8          # GC/k-mer profile features
+    conv_filters: 64
+    conv_kernel: 7
+    dilations: [1, 2, 4]
+    gru_hidden: 64          # BiGRU for sequential bin modeling
+    gru_layers: 1
+    output_dim: 128
+
+  # GTFEncoder
+  gtf:
+    n_features: 17
+    hidden_dim: 64
+    output_dim: 128
+    n_biotypes: 12
+
+  # JunctionEncoder (JEDI + CircPCBL hybrid)
+  junction:
+    k: 5                    # k-mer size (JEDI path) — tuned from sweep
+    embed_dim: 128          # JEDI embedding dimension — tuned from sweep
+    gru_hidden: 64
+    gru_layers: 2
+    gru_dropout: 0.1
+    attention_dim: 16
+    cross_attn_dim: 16      # JEDI-style donor↔acceptor cross-attention
+    # CircPCBL one-hot CNN-BiGRU params
+    cnn_filters: 32
+    kernel_sizes: [3, 5, 7]
+    cnn_gru_hidden: 32
+    cnn_gru_layers: 1
+    # CircPCBL k-mer frequency GLT params
+    kmer_freq_dim: 340      # 4+16+64+256 for k=1..4
+    freq_hidden: 64
+    output_dim: 64
+
+  # SpeciesEmbedding
+  species:
+    n_species: 21           # active strains
+    phylo_pca_dims: 8
+    embed_dim: 32
+    phylo_path: "../1_data/AllFungi/phylogeny/1_nwk/Final_ultrametric_tree.nwk"
+
+  # ExpressionEncoder (only used during fine-tuning)
+  expression:
+    max_replicates: 3
+    hidden_dim: 32
+    output_dim: 64
+
+# ─── Pre-training ─────────────────────────────────────────────────────────────
+pretrain:
+  stage1:
+    epochs: 50
+    learning_rate: 0.001
+    batch_size: 32
+    weight_decay: 1e-5
+    warmup_epochs: 5
+    trainable_modules: ["gtf_encoder", "genome_ctx_encoder", "fusion", "gene_head"]
+
+  stage2:
+    epochs: 100
+    learning_rate: 0.0005
+    batch_size: 16
+    weight_decay: 1e-5
+    warmup_epochs: 10
+    junction_loss_weight: 1.0
+    cosine_annealing: true
+
+  flank_tuning:
+    values: [50, 100, 150, 200, 300, 500]
+    epochs: 50
+    learning_rate: 0.001
+    batch_size: 16
+
+  contrastive:
+    temperature: 0.1
+
+# ─── Fine-tuning ──────────────────────────────────────────────────────────────
+finetune:
+  learning_rate: 5e-5
+  batch_size: 16
+  epochs: 100
+  warmup_epochs: 5
+  early_stop_patience: 10
+  unfreeze_strategy: "gradual"  # linear_probe | gradual | full
+
+# ─── Training ─────────────────────────────────────────────────────────────────
+training:
+  seed: 42
+  num_workers: 2
+  gradient_clip: 1.0
+  amp: true                 # automatic mixed precision
+  log_interval: 10
+  save_interval: 5          # epochs
+  val_split: 0.2            # fraction of genes held out for validation
+  device: "cuda"            # "cpu" fallback handled at runtime
+
+# ─── Logging ──────────────────────────────────────────────────────────────────
+logging:
+  use_wandb: false
+  project: "pancirc-fungi"
+  log_dir: "logs"
+  checkpoint_dir: "checkpoints"
+
+# ─── Interpretability ─────────────────────────────────────────────────────────
+interpret:
+  n_top_features: 10
+  n_top_motifs: 5
+  scan_batch_size: 64
