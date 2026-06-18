@@ -103,12 +103,14 @@ Junction-level (per gene):
 
 ---
 
-## Quick Start for Users
+## Quick Start
 
-> **只想用 mycoCirc 做预测？** 看这一步就够了。
+📖 完整教程（安装 → 下载权重 → 运行预测 → 结果解读）见 **[QUICKSTART.md](QUICKSTART.md)**。
+
+快速上手：
 
 ```bash
-# 1. 下载预训练权重（以 Filamentous 为例）
+# 1. 下载预训练权重（以丝状真菌为例）
 wget https://github.com/yukkikou/mycoCirc/releases/latest/download/mycoCirc_filamentous.pt
 
 # 2. 运行预测（需要 genome.fa + annotation.gtf）
@@ -122,8 +124,6 @@ python scripts/predict.py \
 # 3. 查看结果（p_circ ≥ 0.5 为预测阳性）
 head predictions.tsv
 ```
-
-📖 **详细教程见 [QUICKSTART.md](QUICKSTART.md)** — 包含安装步骤、权重选择、参数说明、常见问题。
 
 ---
 
