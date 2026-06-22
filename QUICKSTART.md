@@ -21,17 +21,19 @@ pip install -r requirements.txt
 
 ## 2 下载预训练权重
 
-从 [Releases](https://github.com/yukkikou/mycoCirc/releases) 下载对应组的权重文件：
+权重文件已包含在仓库中，位于 `model_weights/` 目录：
 
-| 组 | 最适合的真菌 | 下载文件 |
-|:---|:-------------|:---------|
-| Candida | _Candida_, _Pichia_, _Saccharomyces_ | `mycoCirc_candida.pt` |
-| Cryptococcus | _Cryptococcus_ | `mycoCirc_cryptococcus.pt` |
-| Filamentous | _Fusarium_, _Aspergillus_, _Neurospora_, _Penicillium_ 等丝状真菌 | `mycoCirc_filamentous.pt` |
+| 组 | 最适合的真菌 | 文件 |
+|:---|:-------------|:-----|
+| Candida | _Candida_, _Pichia_, _Saccharomyces_ | `model_weights/mycoCirc_candida.pt` |
+| Cryptococcus | _Cryptococcus_ | `model_weights/mycoCirc_cryptococcus.pt` |
+| Filamentous | _Fusarium_, _Aspergillus_, _Neurospora_, _Penicillium_ 等丝状真菌 | `model_weights/mycoCirc_filamentous.pt` |
 
 ```bash
-# 示例：下载丝状真菌权重
-wget https://github.com/yukkikou/mycoCirc/releases/latest/download/mycoCirc_filamentous.pt
+# 克隆仓库即包含权重
+git clone git@github.com:yukkikou/mycoCirc.git
+cd mycoCirc
+ls model_weights/  # 直接可用
 ```
 
 ## 3 准备输入文件

@@ -113,14 +113,14 @@ Junction-level (per gene):
 快速上手：
 
 ```bash
-# 1. 下载预训练权重（以丝状真菌为例）
-wget https://github.com/yukkikou/mycoCirc/releases/latest/download/mycoCirc_filamentous.pt
+# 1. 预训练权重位于 model_weights/ 目录
+ls model_weights/
 
 # 2. 运行预测（需要 genome.fa + annotation.gtf）
 python scripts/predict.py \
     --genome genome.fa \
     --gtf annotation.gtf \
-    --checkpoint mycoCirc_filamentous.pt \
+    --checkpoint model_weights/mycoCirc_filamentous.pt \
     --config config/default.yaml \
     --output predictions.tsv
 
