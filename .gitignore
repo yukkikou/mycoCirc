@@ -46,6 +46,5 @@ scripts/upload_github.sh
 *.so
 *.swo
 *.swp
-test_data/
 *.tsv
 .vscode/
