@@ -16,12 +16,16 @@ docs/manuscript.tex
 *.egg-info/
 .env
 envs/
+# Allow test data
+!test_data/genomes/*.fa
+!test_data/genomes/*.fasta
 *.fa
 *.fasta
 figures/
 *.fna
 *.gff
 *.gff3
+!test_data/annotations/*.gtf
 *.gtf
 /home/1610305236/log/
 .idea/
@@ -46,5 +50,6 @@ scripts/upload_github.sh
 *.so
 *.swo
 *.swp
+!test_data/expected_output/*.tsv
 *.tsv
 .vscode/
