@@ -130,6 +130,64 @@ head predictions.tsv
 
 ---
 
+## Test Dataset
+
+A test dataset of 4 fungal species is provided to verify the model installation and reproduce cross-species evaluation results.
+
+**Download test data:**
+
+```bash
+# Download from GitHub Releases
+wget https://github.com/yukkikou/mycoCirc/releases/download/v1.0/test_data.tar.gz
+tar xzf test_data.tar.gz
+```
+
+**Run prediction on all test species:**
+
+```bash
+bash test_data/predict_test.sh --checkpoint model_weights/mycoCirc_filamentous.pt
+```
+
+**Input format** (per species):
+
+| File | Format | Description |
+|------|--------|-------------|
+| `test_data/genomes/{species}.fa` | FASTA | Reference genome (multi-FASTA) |
+| `test_data/annotations/{species}.gtf` | GTF | Gene annotation with exon, CDS, transcript features |
+
+**Output format** (`test_data/expected_output/{species}_predicted.tsv`):
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `gene_id` | string | Gene identifier (from GTF) |
+| `chrom` | string | Chromosome / scaffold name |
+| `start` | int | Gene start coordinate (1-based) |
+| `end` | int | Gene end coordinate (1-based) |
+| `strand` | string | Genomic strand (+ or -) |
+| `p_circ` | float | Predicted probability that this gene produces a circRNA [0–1] |
+| `n_exons` | int | Number of exons in the gene |
+
+**Test species:**
+
+| Species | Taxonomy | Genes | Expected p≥0.5 |
+|---------|----------|------:|:--------------:|
+| *Aspergillus cristatus* | Filamentous (Ascomycota) | 10,596 | ~1,129 |
+| *Trichophyton rubrum* | Filamentous (Ascomycota) | 7,051 | ~1,375 |
+| *Trichophyton mentagrophytes* | Filamentous (Ascomycota) | 7,958 | ~1,127 |
+| *Talaromyces marneffei* | Filamentous (Ascomycota) | 10,378 | ~2,348 |
+
+**Available checkpoints:**
+
+| File | Model |
+|------|-------|
+| `mycoCirc_filamentous.pt` | Filamentous fungi (recommended for these species) |
+| `mycoCirc_candida.pt` | Ascomycete yeast |
+| `mycoCirc_cryptococcus.pt` | Basidiomycete yeast |
+
+The `--checkpoint` flag selects which fine-tuned model to use. Pre-computed results for each checkpoint are in `test_data/expected_output/`.
+
+---
+
 ## Architecture Overview
 
 ### Requirements
