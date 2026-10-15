@@ -95,8 +95,8 @@ class PredictDataset(Dataset):
 
         # Build gene list (skip genes with <1 exon)
         self.gene_ids = []
-        for gid in list(gm.genes.keys()):
-            g = gm.get_gene(gid)
+        for gid in list(self.gm.genes.keys()):
+            g = self.gm.get_gene(gid)
             if g is not None and g.exon_count >= 1:
                 self.gene_ids.append(gid)
         logger.info(f"  {len(self.gene_ids)} genes to predict")

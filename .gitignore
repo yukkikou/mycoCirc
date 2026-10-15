@@ -53,3 +53,29 @@ scripts/upload_github.sh
 !test_data/expected_output/*.tsv
 *.tsv
 .vscode/
+
+# determinants analysis (cache/outputs regenerated; lib/scripts/report tracked)
+determinants/cache/
+determinants/results/
+determinants/figures/
+determinants/qc/
+*.h5
+*.json
+
+# revision package: CODE ONLY is published.
+# Results, response letter, manuscript edits and figures stay local
+# (they accompany the manuscript submission / Zenodo release instead).
+revision/results/
+revision/response/
+revision/manuscript_edits/
+revision/figures/
+revision/release/
+revision/release_README.md
+revision/features_matched/
+revision/logs/
+!revision/scripts/
+!revision/scripts/**
+
+# Python caches
+__pycache__/
+*.pyc

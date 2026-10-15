@@ -56,12 +56,31 @@ class GenomeIndexer:
         If start < 1 or end > chrom_len, pads with 'N'.
         """
         try:
-            seq = self.fasta[chrom][start - 1 : end - 1].seq
-        except (KeyError, ValueError) as e:
+            chrom_len = len(self.fasta[chrom])
+        except KeyError:
+            logger.debug(f"Chromosome '{chrom}' not found in genome")
+            return "N" * (end - start)
+
+        # Clamp to valid range and pad with 'N's at boundaries
+        left_pad = 0
+        right_pad = 0
+        if start < 1:
+            left_pad = 1 - start
+            start = 1
+        if end > chrom_len:
+            right_pad = end - chrom_len
+            end = chrom_len
+
+        try:
+            if start <= end and start <= chrom_len and end >= 1:
+                seq = self.fasta[chrom][start - 1 : end - 1].seq
+            else:
+                seq = ""
+        except (ValueError, OverflowError) as e:
             logger.debug(f"Failed to fetch {chrom}:{start}-{end}: {e}")
             return "N" * (end - start)
 
-        seq = seq.upper()
+        seq = "N" * left_pad + seq.upper() + "N" * right_pad
         if strand == "-":
             seq = reverse_complement(seq)
         return seq

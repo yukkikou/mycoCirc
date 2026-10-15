@@ -203,6 +203,15 @@ def evaluate(model, loader, device, task="pretrain", label=""):
     logger.info(f"  {label:35s} → AUROC={metrics['auroc']:.4f}  AUPRC={metrics['auprc']:.4f}  "
                 f"F1={metrics['f1']:.4f}  Acc={metrics['accuracy']:.4f}  MCC={metrics['mcc']:.4f}  "
                 f"N={len(y_true)}")
+
+    # Save per-gene predictions for ROC plotting
+    save_label = label.replace(" ", "_").replace("(", "").replace(")", "").replace(",", "")
+    save_dir = Path(PROJ_ROOT) / "results" / "pm1_scores"
+    save_dir.mkdir(parents=True, exist_ok=True)
+    np.savez(save_dir / f"pm1_{save_label}.npz",
+             y_true=y_true, y_prob=y_prob)
+    logger.info(f"  Saved predictions to {save_dir / f'pm1_{save_label}.npz'}")
+
     return metrics
 
 

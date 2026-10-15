@@ -106,6 +106,52 @@ Junction-level (per gene):
 
 ---
 
+## Revision Module (revision/)
+
+Analyses added in revision of the manuscript, kept self-contained so that
+nothing in the published pipeline changes. Includes confidence intervals
+and paired DeLong tests for every reported AUROC, matched-negative
+robustness, GTF-only and CircPCBL-retrained baselines, genome-wide
+threshold/calibration analysis, expression-detectability probe, and a
+species-embedding sensitivity study — plus the response letter, manuscript
+text-edit lists and two supplementary figures.
+
+A separate release bundle (`revision/release/`) groups the
+manuscript-reproducing checkpoints and the alternatively-trained
+`updated_recipe` checkpoints; see `revision/README.md` for the map from
+each reviewer comment to its evidence file.
+
+---
+
+## Determinants of circRNA Production (determinants/ module)
+
+*What drives fungal circRNA formation?* A dedicated analysis module (`determinants/`, self-contained: lib + scripts + SLURM + results + figures + report) tests 13 candidate factors across the 20 event-bearing training strains. Positives are anchored on circ coordinates; negatives are non-circular exons matched on exon length, host expression, exon count **and flank GC**; statistics are strain-stratified (Mantel-Haenszel) with phylogenetic independent contrasts (PIC) where cross-strain.
+
+**Full report: `determinants/determinants_report.md` · figures: `determinants/figures/det_*.pdf` · raw tables: `determinants/results/`**
+
+| Factor | Candida | Cryptococcus | Filamentous | Verdict |
+|--------|:-------:|:------------:|:-----------:|---------|
+| **Donor splice-site strength** | n.e.† | **Δ=+0.81 bit** (p=2e-12) | **Δ=+1.01 bit** (p=2e-33) | ✅ strongest sequence determinant |
+| Acceptor strength | n.e.† | Δ=−1.08 (p=3e-4) | ns | ⚠️ asymmetric (weak acceptor) |
+| **Flanking GC elevation** | **+0.038** (7/7) | +0.002 (6/6) | **+0.023** (7/7) | ✅ conserved (C7 reversed) |
+| **Purine GAAG-core motifs** | **GAAG OR=4.15** | ~1.5× (CTCC/TACC) | CGAG 1.87 / GAAG 1.69 | ✅ GAAG shared Candida+Filamentous; converges with MEME de-novo (AAGAAG, E=9e-195) |
+| RCS / hairpin pairing | **less** (q<1e-52) | none | ≈0 after GC control | ❌ hairpin-driven backsplicing **not** the fungal mechanism |
+| circ-transcript structure vs abundance | ns | **rho=+0.20** (q=2e-4) | ns | ⚠️ Cryptococcus only |
+| Flank local fold stability (MFE/nt) | **−0.036** (q=1e-106) | ns | **−0.009** (q=3e-57) | ✅ locally more structured |
+| Inter-arm (cross-junction) pairs | fewer | fewer | fewer | ❌ corroborates the RCS negative |
+| **Spliceosome family expression vs circ density** | rho 0.61–0.73, **all 6 families q<0.01**; lariat/debranch 0.73 (PIC 0.67, q=0.003) | | | ✅ strongest gene-level determinant |
+| Spliceosome expression vs per-circ abundance | rho −0.48…−0.54 (**PIC −0.93**) | | | ✅ inverse: many-but-low-abundance |
+| Splicing-gene presence/copy number | all q>0.9 | | | ❌ expression, not gene content |
+| Model-side (mutagenesis / attention∩motif) | p=4e-118 | sensitivity 0.088; attention ns | p=2e-83 | ⚠️ corroborates in 2/3 groups |
+
+† Candida not evaluable: circ boundaries almost never coincide with annotated exon boundaries (exact rate <0.4%).
+
+**Integrated model.** Fungal circRNA production is governed by **strong donor splice sites + purine/G-elevated proximal flanks (GAAG-core motifs) + locally (not cross-junction) stable flank structure**, globally modulated by the strain's **spliceosome expression level — especially the lariat/debranching pathway** — while the hairpin/complementary-repeat mechanism dominant in animals and plants **does not operate in fungi**.
+
+**Run it:** `determinants/scripts/det_strain_qc.py → det_build_cache.py → det_a_*/det_b/det_c → det_d (GPU) → det_figures_report.py`; SLURM wrappers in `determinants/slurm/`. External tools (samtools/RNAfold/MEME) run via read-only Singularity images (`lib/containers.py` handles the login-node `--no-mount /work` quirk).
+
+---
+
 ## Quick Start
 
 📖 完整教程（安装 → 下载权重 → 运行预测 → 结果解读）见 **[QUICKSTART.md](QUICKSTART.md)**。
