@@ -164,9 +164,13 @@ def _load_expression_data(entries, max_replicates=3):
     return expression_data
 
 
-def _make_model(config, n_species, pretrained_path, device, strategy="full"):
+def _make_model(config, n_species, pretrained_path, device, strategy="full",
+                phylo_features=None):
     """Create a fresh model, optionally load pretrained weights, apply freeze strategy."""
     model = PanCircModel(config["model"], n_species=n_species)
+    if phylo_features:
+        model.species_embedding.load_phylo_from_npy(phylo_features)
+        logger.info(f"  Loaded phylogenetic features: {phylo_features}")
     if pretrained_path and os.path.isfile(pretrained_path):
         ckpt = torch.load(pretrained_path, map_location=device)
         missing, unexpected = model.load_state_dict(ckpt["model_state_dict"], strict=False)
@@ -279,6 +283,9 @@ def main():
                         choices=["linear_probe", "gradual", "full"])
     parser.add_argument("--epochs", type=int, default=None)
     parser.add_argument("--num-workers", type=int, default=2)
+    parser.add_argument("--phylo-features", default=None,
+                        help="Optional .npy file of precomputed phylogenetic "
+                             "features (n_species_strains x phylo_pca_dims).")
     args = parser.parse_args()
 
     if not args.from_scratch and not args.pretrained:
@@ -383,7 +390,7 @@ def main():
     # ── Pre-training baseline ──────────────────────────────────────────
     if test_loader:
         logger_r.info("\n--- Baseline (pre-trained, before fine-tuning) ---")
-        base_model = _make_model(config, n_sp, args.pretrained, device, args.unfreeze_strategy)
+        base_model = _make_model(config, n_sp, args.pretrained, device, args.unfreeze_strategy, phylo_features=args.phylo_features)
         base_metrics = evaluate(base_model, test_loader, device, task="finetune")
         for k, v in base_metrics.items():
             logger_r.info(f"  {k}: {v:.4f}")
@@ -410,7 +417,7 @@ def main():
         logger_r.info(f"\n--- Fold {fold_idx+1}/{n_folds}: val={val_strain}, train={train_strains_fold} ---")
 
         # Fresh model from pretrained
-        model = _make_model(config, n_sp, args.pretrained, device, args.unfreeze_strategy)
+        model = _make_model(config, n_sp, args.pretrained, device, args.unfreeze_strategy, phylo_features=args.phylo_features)
 
         # Build train loader (concat all training strains for this fold)
         train_loader_fold = ConcatDataset(
@@ -469,7 +476,7 @@ def main():
         logger_r.info("\n--- Final evaluation on held-out test strain ---")
 
         # Load best fold model
-        model = _make_model(config, n_sp, args.pretrained, device, args.unfreeze_strategy)
+        model = _make_model(config, n_sp, args.pretrained, device, args.unfreeze_strategy, phylo_features=args.phylo_features)
         best_ckpt = torch.load(best_fold_path, map_location=device)
         model.load_state_dict(best_ckpt["model_state_dict"])
         best_model_state = best_ckpt["model_state_dict"]

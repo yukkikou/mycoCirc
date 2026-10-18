@@ -141,6 +141,10 @@ def main():
     parser.add_argument("--flank-size", type=int, default=None)
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--num-workers", type=int, default=4)
+    parser.add_argument("--phylo-features", default=None,
+                        help="Optional .npy file of precomputed phylogenetic "
+                             "features, shape (n_species_strains, phylo_pca_dims). "
+                             "See scripts/compute_phylogeny_embedding.py.")
     args = parser.parse_args()
 
     # ── Load config ───────────────────────────────────────────────────────
@@ -230,6 +234,9 @@ def main():
     # ── Build model ───────────────────────────────────────────────────────
     n_species = len(build_strain_index(active))
     model = PanCircModel(config["model"], n_species=n_species)
+    if getattr(args, "phylo_features", None):
+        model.species_embedding.load_phylo_from_npy(args.phylo_features)
+        logger_r.info(f"Loaded phylogenetic features: {args.phylo_features}")
     n_total, n_trainable = count_parameters(model)
     logger_r.info(f"Model: {n_total:,} total params, {n_trainable:,} trainable")
     model.to(device)

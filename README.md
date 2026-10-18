@@ -78,6 +78,42 @@ Junction-level (per gene):
 | **Cryptococcus** | *C. neoformans* var. *grubii* (×2), *C. floricola*, *C. gattii* (×2), *C. laurentii* | **_C. neoformans_ var. _neoformans_** |
 | **Filamentous** | *F. proliferatum*, *F. dimerum*, *N. crassa*, *A. fumigatus*, *P. chrysogenum* | **_F. venenatum_** |
 
+### Optional: supplying a species tree (phylogenetic features)
+
+By default the model uses a learned species lookup embedding and, for species
+unseen during training, a single default slot. If you work on a clade where a
+**well-resolved species tree is available** and you have enough training
+strains, you can additionally supply phylogenetic features:
+
+```bash
+# 1) compute PCA features from an ultrametric Newick tree
+python scripts/compute_phylogeny_embedding.py \
+    --tsv all_lib_model_full.tsv \
+    --tree /path/to/your_tree.nwk \
+    --output checkpoints/phylogeny            # writes phylo_pca_features.npy
+
+# 2) pass them to pre-training and/or fine-tuning
+python train/pretrain.py --config config/default.yaml \
+    --phylo-features checkpoints/phylogeny/phylo_pca_features.npy
+
+python train/finetune.py --group Candida --pretrained checkpoints/pretrain/best.pt \
+    --phylo-features checkpoints/phylogeny/phylo_pca_features.npy
+```
+
+The file must be a NumPy array of shape `(n_strains, phylo_pca_dims)` (default
+`phylo_pca_dims = 8`), ordered exactly as the strains returned by
+`data.tsv_parser.build_strain_index()` over the active (non-excluded) strains;
+`compute_phylogeny_embedding.py` writes both the array and
+`phylo_strain_order.txt` so the order can be checked.
+
+**Note.** In the checkpoints released with the paper this pathway was left at
+its default (all-zero) state: with 22 training strains and no tree that is
+comparable across the 768 atlas genomes, we found no evidence that
+species-resolved phylogenetic information improves prediction (see the modality
+ablation in the manuscript, where zeroing the species modality changes AUROC by
+≈0). The option is provided for users who do have a suitable tree for a
+smaller, well-characterised clade.
+
 ---
 
 ## Results Summary
