@@ -79,3 +79,30 @@ revision/logs/
 # Python caches
 __pycache__/
 *.pyc
+
+# revision outputs that must NOT be published (code only)
+revision/corrected_model/checkpoints/
+revision/corrected_model/atlas/
+revision/corrected_model/atlas_p085/
+revision/corrected_model/eval/
+revision/corrected_model/logs/
+revision/atlas_p085_deploy/
+revision/release_v2/
+revision/r_inputs/interpretability/
+revision/r_inputs/*.tsv
+revision/figures_r/
+revision/figures_v2/
+revision/word/
+revision/final_tables/
+revision/*.zip
+revision/*.tar.gz
+revision/*.log
+
+# peer-review correspondence and stray nested dir
+revision/rivised_point-to-point*.txt
+revision/revision/
+revision/zenodo_metadata.md
+revision/zenodo_version_description.md
+revision/release_v2_README.md
+revision/cover_letter_revision.md
+revision/FINAL_DELIVERABLES.md

@@ -18,7 +18,7 @@ ROOT=$(dirname "$REV")
 OUT="$REV/release"
 
 rm -rf "$OUT"
-mkdir -p "$OUT"/{models/paper_version,models/updated_recipe,code,results,figures,manuscript_edits,response}
+mkdir -p "$OUT"/{models/paper_version,models/updated_recipe,code,results,figures}
 
 # ── models ─────────────────────────────────────────────────────────────────
 cp "$ROOT"/model_weights/mycoCirc_candida.pt        "$OUT/models/paper_version/"
@@ -31,6 +31,18 @@ cp "$REV"/checkpoints/nocircexp/Filamentous/final.pt  "$OUT/models/updated_recip
 # ── release README (template lives outside $OUT so rebuilds don't wipe it) ─
 cp "$REV"/release_README.md "$OUT/README.md"
 
+# ── VERSION ────────────────────────────────────────────────────────────────
+cat > "$OUT/VERSION" <<'VER'
+mycoCirc revision release v1.0
+assembled: __DATE__
+contents: two checkpoint sets (paper_version = manuscript-reproducing;
+          updated_recipe = circRNA-expression-zeroed alternative),
+          analysis code, result tables, supplementary figures,
+          response letter and manuscript edit lists.
+see README.md; file list with md5 in MANIFEST.tsv
+VER
+sed -i "s/__DATE__/$(date -u +%Y-%m-%d)/" "$OUT/VERSION"
+
 # ── code / results / figures / documents ───────────────────────────────────
 cp "$REV"/scripts/*.py "$REV"/scripts/*.sh "$OUT/code/" 2>/dev/null || true
 cp "$REV"/slurm/*.slurm "$OUT/code/" 2>/dev/null || true
@@ -41,10 +53,28 @@ cp "$REV"/results/*.npz "$OUT/results/" 2>/dev/null || true
 cp "$REV"/results/rescore/*.npz "$REV"/results/rescore/*.tsv "$OUT/results/rescore/" 2>/dev/null || true
 cp "$REV"/results/a3_predictions/*.npz "$OUT/results/a3_predictions/" 2>/dev/null || true
 cp -r "$REV"/results/a2_matched_sets "$OUT/results/" 2>/dev/null || true
+# Local count-reconciliation bookkeeping stays private (working-copy drift
+# relative to the released database version is not part of the public record)
+rm -f "$OUT/results/a5_atlas_count_reconciliation.csv"
+if [ -f "$OUT/results/a5_high_confidence_evidence.md" ]; then
+  python3 - "$OUT/results/a5_high_confidence_evidence.md" <<'PYSTRIP'
+import sys, pathlib
+p = pathlib.Path(sys.argv[1]); s = p.read_text()
+a = s.find("## Atlas count reconciliation")
+b = s.find("## Empirical precision")
+if a != -1 and b > a:
+    p.write_text(s[:a] + s[b:])
+PYSTRIP
+fi
+
 cp "$REV"/figures/supp_fig_*.svg "$REV"/figures/supp_fig_*.pdf \
    "$REV"/figures/supp_fig_captions.md "$OUT/figures/" 2>/dev/null || true
-cp "$REV"/manuscript_edits/*.md "$OUT/manuscript_edits/" 2>/dev/null || true
-cp "$REV"/response/*.md "$OUT/response/" 2>/dev/null || true
+# PUBLIC release contains code, data, figures and models only.
+# Internal working documents are deliberately NOT shipped:
+#   manuscript_edits/ (strategy notes, reviewer-response drafting, verbatim
+#                      manuscript text) and response/ (response letter,
+#                      traceability map) are peer-review correspondence and
+#                      stay private until/unless the journal publishes them.
 
 # ── manifest with checksums ────────────────────────────────────────────────
 {
